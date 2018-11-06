@@ -11,7 +11,7 @@
     </style>
 </head>
 <body>
-
+<script src="player.js"></script>
 <script type="text/javascript">
 
 var config = {
@@ -40,8 +40,18 @@ var config = {
     var selected;
     var player;
     var cursors;
+
+    // Used for the class
+    var player1;
+    var enemy1;
+
+    // UI overlay
     var Ui1;
     var Ui2;
+
+    // Text for the UI
+    var playerText;
+    var enemyText;
 
     // Enumerations with state
     const Actions = {
@@ -64,6 +74,10 @@ var config = {
       this.add.sprite(625, 250, 'dragon');
       this.add.image();
 
+      player1 = new Player('MMan', 5, 200, 200, 'assets/MMIdle60x75.png', 50, 50);
+      enemy1 = new Enemy('dragon', 10, 1000,1000, 'assets/dragon.png');
+
+
       player = this.add.sprite(100, 300,'MMan');
       players.push(player);
       this.anims.create({
@@ -73,8 +87,10 @@ var config = {
         repeat: -1,
       });
 
-      Ui1 = this.add.sprite(160, 510, 'UIoverlay').setScale(4,3);
-      Ui2 = this.add.sprite(560, 510, 'UIoverlay').setScale(6,3);
+      Ui1 = this.add.sprite(240, 510, 'UIoverlay').setScale(6,3);
+      Ui2 = this.add.sprite(640, 510, 'UIoverlay').setScale(4,3);
+
+      playerText = this.add.text(100, 100, 'Attack', { fontSize: '32px', fill: '#FFF' });
       cursors = this.input.keyboard.createCursorKeys();
 
 
