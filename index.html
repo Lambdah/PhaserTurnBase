@@ -12,7 +12,10 @@
 </head>
 <body>
 <script src="player.js"></script>
+<script src="enemy.js"></script>
+<script src="skills/skills.js"></script>
 <script type="text/javascript">
+
 
 var config = {
         type: Phaser.AUTO,
@@ -44,6 +47,8 @@ var config = {
     // Used for the class
     var player1;
     var enemy1;
+    var skill_player1;
+    var enemy_unit;
 
     // UI overlay
     var Ui1;
@@ -63,6 +68,12 @@ var config = {
     var actions = Actions.IDLE;
 
     function preload(){
+
+      player1 = new Player('MMan', 5, 200, 200, 'assets/MMIdle60x75.png', 50, 50);
+      enemy1 = new Enemy('dragon', 10, 1000,1000, 'assets/dragon.png');
+      skill_player1 = new UnitSkills(player1);
+      enemy_unit = new UnitSkills(enemy_unit);
+
       this.load.image('town', 'assets/Battleback_town.png');
       this.load.image('dragon', 'assets/dragon.png');
       this.load.spritesheet('MMan', 'assets/MMIdle60x75.png', {frameWidth: 60, frameHeight: 75});
@@ -74,8 +85,7 @@ var config = {
       this.add.sprite(625, 250, 'dragon');
       this.add.image();
 
-      player1 = new Player('MMan', 5, 200, 200, 'assets/MMIdle60x75.png', 50, 50);
-      enemy1 = new Enemy('dragon', 10, 1000,1000, 'assets/dragon.png');
+
 
 
       player = this.add.sprite(100, 300,'MMan');
