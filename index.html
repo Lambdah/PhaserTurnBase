@@ -48,7 +48,7 @@ var config = {
     var player1;
     var enemy1;
     var skill_player1;
-    var enemy_unit;
+    var skill_enemy1;
 
     // UI overlay
     var Ui1;
@@ -57,6 +57,8 @@ var config = {
     // Text for the UI
     var playerText;
     var enemyText;
+    var playerHealth;
+    var skillText;
 
     // Enumerations with state
     const Actions = {
@@ -68,15 +70,16 @@ var config = {
     var actions = Actions.IDLE;
 
     function preload(){
-
-      player1 = new Player('MMan', 5, 200, 200, 'assets/MMIdle60x75.png', 50, 50);
+      // enemy1 is not constructing anything
+      player1 = new Player('MMan', 5, 200, 200, 'assets/MMIdle60x75.png', 50, 50, true, Actions.IDLE);
       enemy1 = new Enemy('dragon', 10, 1000,1000, 'assets/dragon.png');
       skill_player1 = new UnitSkills(player1);
-      enemy_unit = new UnitSkills(enemy_unit);
+      skill_enemy1 = new UnitSkills(enemy1);
 
+      // Have to figure out how to use setters and getters for the player and enemy class
       this.load.image('town', 'assets/Battleback_town.png');
       this.load.image('dragon', 'assets/dragon.png');
-      this.load.spritesheet('MMan', 'assets/MMIdle60x75.png', {frameWidth: 60, frameHeight: 75});
+      this.load.spritesheet(player1.name, player1.image, {frameWidth: 60, frameHeight: 75});
       this.load.image('UIoverlay', 'assets/UI-overlay80x60.png');
     }
 
@@ -84,15 +87,11 @@ var config = {
       this.add.image(0,0,'town').setOrigin(0,0);
       this.add.sprite(625, 250, 'dragon');
       this.add.image();
-
-
-
-
       player = this.add.sprite(100, 300,'MMan');
       players.push(player);
       this.anims.create({
         key: 'idle',
-        frames: this.anims.generateFrameNumbers('MMan', { start:0, end: 1}),
+        frames: this.anims.generateFrameNumbers(player1.name, { start:0, end: 1}),
         frameRate:3,
         repeat: -1,
       });
@@ -100,16 +99,28 @@ var config = {
       Ui1 = this.add.sprite(240, 510, 'UIoverlay').setScale(6,3);
       Ui2 = this.add.sprite(640, 510, 'UIoverlay').setScale(4,3);
 
-      playerText = this.add.text(100, 100, 'Attack', { fontSize: '32px', fill: '#FFF' });
+      // Header text
+
+      // Text for Player controlled character
+      this.add.text(50, 420, 'Name', { fontSize: '26px', fill: '#FFF' });
+      this.add.text(200, 420, 'HP', { fontSize: '26px', fill: '#FFF' });
+      this.add.text(300, 420, 'SP', { fontSize: '26px', fill: '#FFF' });
+      // Phaser has groups, try to figure out how to use them and anchor the text
+      playerText = this.add.text(50, 450, player1.name, { fontSize: '32px', fill: '#FFF' });
+      playerHealth = this.add.text(200, 450, player1.currentHealth, { fontSize: '32px', fill: '#FFF' });
+      skillText = this.add.text(300, 450, player1.currentSkillPoints, { fontSize: '32px', fill: '#FFF' });
+
+      // Text for the enemy
+      this.add.text(520, 450, 'Mecha Dragon', { fontSize: '32px', fill: '#FFF' });
+
+
+
       cursors = this.input.keyboard.createCursorKeys();
-
-
-
     }
 
     function update(){
-
-      if (actions === Actions.IDLE){
+      if (player1.currAction === Actions.IDLE){
+      // if (actions === Actions.IDLE){
       player.anims.play('idle', true);
       }
 
