@@ -67,6 +67,14 @@ var config = {
     var skillBtn;
     var itemBtn;
 
+    // images
+
+    // original positions of player
+    var org_x;
+
+    // Move
+    var action_move;
+
     // Enumerations with state
     const Actions = {
       IDLE: 'idle',
@@ -152,12 +160,14 @@ var config = {
         console.log('Item');
       });
 
-
       mouseHoverMouseExit(atkBtn);
       mouseHoverMouseExit(skillBtn);
       mouseHoverMouseExit(spellBtn);
       mouseHoverMouseExit(itemBtn);
 
+
+      org_x = player.x;
+      action_move = false;
       cursors = this.input.keyboard.createCursorKeys();
     }
 
@@ -167,10 +177,18 @@ var config = {
     }else if (player1.currAction === Actions.ATTACK){
       // player.anims.play('move');
       // player.setVisible(false);
-      let org_x = player1.x;
-      let org_y = player1.y;
-      player1.x += 10;
       // player.setVisible(true);
+      if (player.x < 160 && !action_move){
+        player.x += 4;
+      }else if (player.x === 160){
+        console.log("Moved to attack");
+        console.log(player.x);
+        atk_move = true;
+      }else if(player.x > org_x && atk_move){
+        player.x -= 4;
+        console.log("Here");
+      }
+
     }
 
     }
