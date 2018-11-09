@@ -53,12 +53,19 @@ var config = {
     // UI overlay
     var Ui1;
     var Ui2;
+    var CommandUI;
 
     // Text for the UI
     var playerText;
     var enemyText;
     var playerHealth;
     var skillText;
+
+    // buttons
+    var atkBtn;
+    var spellBtn;
+    var skillBtn;
+    var itemBtn;
 
     // Enumerations with state
     const Actions = {
@@ -113,7 +120,31 @@ var config = {
       // Text for the enemy
       this.add.text(520, 450, 'Mecha Dragon', { fontSize: '32px', fill: '#FFF' });
 
+      CommandUI = this.add.sprite(430, 500, 'UIoverlay').setScale(2,3);
 
+      atkBtn = this.add.text(370, 420, 'Attack', { fill: '#fff', fontSize: '32px' }).setInteractive();
+      skillBtn = this.add.text(370, 420+40, 'Skill', { fill: '#fff', fontSize: '32px' }).setInteractive();
+      spellBtn = this.add.text(370, 420+2*40, 'Spell', { fill: '#fff', fontSize: '32px' }).setInteractive();
+      itemBtn = this.add.text(370, 420+3*40, 'Item', { fill: '#fff', fontSize: '32px' }).setInteractive();
+
+      atkBtn.on('pointerdown', function attack(){
+        console.log('Attack');
+      });
+      skillBtn.on('pointerdown', function skill(){
+        console.log('Skill');
+      });
+      spellBtn.on('pointerdown', function skill(){
+        console.log('Spell');
+      });
+      itemBtn.on('pointerdown', function skill(){
+        console.log('Item');
+      });
+
+
+      mouseHoverMouseExit(atkBtn);
+      mouseHoverMouseExit(skillBtn);
+      mouseHoverMouseExit(spellBtn);
+      mouseHoverMouseExit(itemBtn);
 
       cursors = this.input.keyboard.createCursorKeys();
     }
@@ -124,6 +155,15 @@ var config = {
       player.anims.play('idle', true);
       }
 
+    }
+
+    function mouseHoverMouseExit(btn){
+      btn.on('pointerover', function enterButtonHover(){
+        btn.setStyle({ backgroundColor: '#ff00ff', fontSize: '32px'});
+      });
+      btn.on('pointerout', function enterButtonRest(){
+        btn.setStyle({fill: '#fff', fontSize: '32px'});
+      });
     }
 
 </script>
