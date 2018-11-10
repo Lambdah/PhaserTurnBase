@@ -44,6 +44,10 @@ var config = {
     var player;
     var cursors;
 
+    // FX sprites
+    var fx_sprites = [];
+    var fx_dict = {};
+
     // Used for the class
     var player1;
     var enemy1;
@@ -74,7 +78,13 @@ var config = {
 
     // Move
     var action_move;
+    var atk_move = true;
 
+    // stop distance for player controlled units
+    const stop_x = 160;
+    const stop_y = 300;
+
+    var fx=0;
     // Enumerations with state
     const Actions = {
       IDLE: 'idle',
@@ -96,6 +106,9 @@ var config = {
       this.load.image('dragon', 'assets/dragon.png');
       this.load.spritesheet(player1.name, player1.image, {frameWidth: 60, frameHeight: 75});
       this.load.image('UIoverlay', 'assets/UI-overlay80x60.png');
+
+      //FX
+      fx = this.load.spritesheet('flame', 'assets/Fireball44x44.png', {frameWidth:44, frameHeight: 44});
     }
 
     function create(){
@@ -103,7 +116,11 @@ var config = {
       this.add.sprite(625, 250, 'dragon');
       this.add.image();
       player = this.add.sprite(100, 300,'MMan');
-      players.push(player);
+
+      // FX sprites
+      fx_dict['flame'] = this.add.sprite(stop_x+20, stop_y-20, 'flame');
+      fx_dict['flame'].visible = false;
+
 
       // Animations created for Player's team
       this.anims.create({
@@ -118,6 +135,23 @@ var config = {
         // frameRate:1,
         repeat: -1,
       });
+      this.anims.create({
+        key: 'attack',
+        frames: this.anims.generateFrameNumbers(player1.name, {start:2, end: 4 }),
+        frameRate:7,
+        hideOnComplete: false,
+      });
+
+      // Animating frames for FX
+      this.anims.create({
+        key: 'fireFX',
+        frames: this.anims.generateFrameNumbers('flame', {start: 0, end: 2}),
+        frameRate: 5,
+        hideOnComplete: true,
+      });
+
+      player.on('animationcomplete', player_listener);
+
 
 
       Ui1 = this.add.sprite(240, 510, 'UIoverlay').setScale(6,3);
@@ -139,16 +173,21 @@ var config = {
 
       CommandUI = this.add.sprite(430, 500, 'UIoverlay').setScale(2,3);
 
+      // Text in the CommandUI
       atkBtn = this.add.text(370, 420, 'Attack', { fill: '#fff', fontSize: '32px' }).setInteractive();
       skillBtn = this.add.text(370, 420+40, 'Skill', { fill: '#fff', fontSize: '32px' }).setInteractive();
       spellBtn = this.add.text(370, 420+2*40, 'Spell', { fill: '#fff', fontSize: '32px' }).setInteractive();
       itemBtn = this.add.text(370, 420+3*40, 'Item', { fill: '#fff', fontSize: '32px' }).setInteractive();
 
+
       atkBtn.on('pointerdown', function attack(){
         // console.log(player1.currAction);
         player1.currAction = Actions.ATTACK;
-        org_x = player1.x;
-        org_y = player1.y;
+        player.anims.play('attack');
+        // player.anims.play('attack');
+        // attack_fx();
+        // fx_dict['flame'].visible = true;
+        // fx_dict['flame'].anims.play('fireFX');
       });
       skillBtn.on('pointerdown', function skill(){
         console.log('Skill');
@@ -166,30 +205,32 @@ var config = {
       mouseHoverMouseExit(itemBtn);
 
 
+
       org_x = player.x;
       action_move = false;
       cursors = this.input.keyboard.createCursorKeys();
+
+    }
+
+    function* movePlayer(pos){
+      yield;
+      player.x = pos;
+      console.log(player.x);
     }
 
     function update(){
-      if (player1.currAction === Actions.IDLE){
+    if (player1.currAction === Actions.IDLE){
       player.anims.play('idle', true);
     }else if (player1.currAction === Actions.ATTACK){
-      // player.anims.play('move');
-      // player.setVisible(false);
-      // player.setVisible(true);
-      if (player.x < 160 && !action_move){
+    if (player.x < stop_x && !action_move){
         player.x += 4;
-      }else if (player.x === 160){
-        console.log("Moved to attack");
-        console.log(player.x);
-        atk_move = true;
-      }else if(player.x > org_x && atk_move){
-        player.x -= 4;
-        console.log("Here");
+        console.log(atk_move);
+    }else if (player.x === stop_x){
+
       }
 
     }
+
 
     }
 
@@ -200,6 +241,17 @@ var config = {
       btn.on('pointerout', function enterButtonRest(){
         btn.setStyle({fill: '#fff', fontSize: '32px'});
       });
+    }
+
+    function attack_fx(){
+      fx_dict['flame'].visible = true;
+      fx_dict['flame'].anims.play('fireFX');
+    }
+
+    function player_listener(){
+      if (player.anims.getCurrentKey() === 'attack'){
+        attack_fx();
+      }
     }
 
 </script>
