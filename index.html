@@ -42,6 +42,7 @@ var config = {
 
     var selected;
     var player;
+    var enemy;
     var cursors;
 
     // FX sprites
@@ -57,8 +58,9 @@ var config = {
     // UI overlay
     var Ui1;
     var Ui2;
-    var CommandUI;
 
+    var Commands = [];
+    var CommandUI;
     // Text for the UI
     var playerText;
     var enemyText;
@@ -74,7 +76,6 @@ var config = {
     // images
 
     // original positions of player
-    var org_x;
 
     // Move
     var action_move;
@@ -84,12 +85,16 @@ var config = {
     const stop_x = 160;
     const stop_y = 300;
 
-    var fx=0;
+    // Starting position of player units
+    const org_x = 100;
+
     // Enumerations with state
     const Actions = {
       IDLE: 'idle',
       ATTACK: 'attack',
-      OTHER: 'other'
+      OTHER: 'other',
+      MOVEBACK: 'moveback',
+      MOVEFORWARD: 'moveforward',
     }
 
     var actions = Actions.IDLE;
@@ -113,12 +118,13 @@ var config = {
 
     function create(){
       this.add.image(0,0,'town').setOrigin(0,0);
-      this.add.sprite(625, 250, 'dragon');
+      enemy = this.add.sprite(625, 250, 'dragon');
       this.add.image();
-      player = this.add.sprite(100, 300,'MMan');
+      player = this.add.sprite(org_x, 300,'MMan');
 
       // FX sprites
-      fx_dict['flame'] = this.add.sprite(stop_x+20, stop_y-20, 'flame');
+      // fx_dict['flame'] = this.add.sprite(stop_x+20, stop_y-20, 'flame');
+      fx_dict['flame'] = this.add.sprite(0, 0, 'flame');
       fx_dict['flame'].visible = false;
 
 
@@ -151,6 +157,7 @@ var config = {
       });
 
       player.on('animationcomplete', player_listener);
+      fx_dict['flame'].on('animationcomplete', fx_listerner);
 
 
 
@@ -179,15 +186,16 @@ var config = {
       spellBtn = this.add.text(370, 420+2*40, 'Spell', { fill: '#fff', fontSize: '32px' }).setInteractive();
       itemBtn = this.add.text(370, 420+3*40, 'Item', { fill: '#fff', fontSize: '32px' }).setInteractive();
 
+      Commands.push(CommandUI);
+      Commands.push(atkBtn);
+      Commands.push(skillBtn);
+      Commands.push(spellBtn);
+      Commands.push(itemBtn);
 
       atkBtn.on('pointerdown', function attack(){
-        // console.log(player1.currAction);
         player1.currAction = Actions.ATTACK;
         player.anims.play('attack');
-        // player.anims.play('attack');
-        // attack_fx();
-        // fx_dict['flame'].visible = true;
-        // fx_dict['flame'].anims.play('fireFX');
+
       });
       skillBtn.on('pointerdown', function skill(){
         console.log('Skill');
@@ -206,27 +214,29 @@ var config = {
 
 
 
-      org_x = player.x;
       action_move = false;
       cursors = this.input.keyboard.createCursorKeys();
 
     }
 
-    function* movePlayer(pos){
-      yield;
-      player.x = pos;
-      console.log(player.x);
-    }
 
     function update(){
     if (player1.currAction === Actions.IDLE){
       player.anims.play('idle', true);
     }else if (player1.currAction === Actions.ATTACK){
-    if (player.x < stop_x && !action_move){
+    deactivateCommand();
+    if (player.x < stop_x){
         player.x += 4;
-        console.log(atk_move);
-    }else if (player.x === stop_x){
+      }
 
+    }else if (player1.currAction === Actions.MOVEBACK){
+      // console.log("Move Back");
+      if (player.x === org_x){
+        player1.currAction = Actions.IDLE;
+        activateCommand();
+      }else{
+        player.anims.play('idle', true);
+        player.x -= 4;
       }
 
     }
@@ -244,14 +254,34 @@ var config = {
     }
 
     function attack_fx(){
+      fx_dict['flame'].x = player.x+20;
+      fx_dict['flame'].y = player.y-20;
       fx_dict['flame'].visible = true;
       fx_dict['flame'].anims.play('fireFX');
     }
 
+    function deactivateCommand(){
+      for (i in Commands){
+        Commands[i].visible = false;
+      }
+    }
+
+    function activateCommand(){
+      for (i in Commands){
+        Commands[i].visible = true;
+      }
+    }
+
+
     function player_listener(){
       if (player.anims.getCurrentKey() === 'attack'){
         attack_fx();
+
       }
+    }
+
+    function fx_listerner(){
+      player1.currAction = Actions.MOVEBACK;
     }
 
 </script>
