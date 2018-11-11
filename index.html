@@ -101,8 +101,9 @@ var config = {
 
     function preload(){
       // enemy1 is not constructing anything
-      player1 = new Player('MMan', 5, 200, 200, 'assets/MMIdle60x75.png', 50, 50, true, Actions.IDLE);
-      enemy1 = new Enemy('dragon', 10, 1000,1000, 'assets/dragon.png');
+      player1 = new Player('MMan', 5, 200, 200, 'assets/MMIdle60x75.png', 50, 50, true, Actions.IDLE, null);
+      // enemy1 = new Enemy('dragon', 10, 1000,1000, 'assets/dragon.png');
+      enemy1 = new Enemy('Dragon', 5, 200, 200, 'assets/dragon.png', false, Actions.IDLE, null);
       skill_player1 = new UnitSkills(player1);
       skill_enemy1 = new UnitSkills(enemy1);
 
@@ -119,11 +120,11 @@ var config = {
     function create(){
       this.add.image(0,0,'town').setOrigin(0,0);
       enemy = this.add.sprite(625, 250, 'dragon');
-      this.add.image();
+      enemy1.sprite = enemy;
       player = this.add.sprite(org_x, 300,'MMan');
+      player1.sprite = player;
 
       // FX sprites
-      // fx_dict['flame'] = this.add.sprite(stop_x+20, stop_y-20, 'flame');
       fx_dict['flame'] = this.add.sprite(0, 0, 'flame');
       fx_dict['flame'].visible = false;
 
