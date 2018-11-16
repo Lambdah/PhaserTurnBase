@@ -14,6 +14,7 @@
 <script src="player.js"></script>
 <script src="enemy.js"></script>
 <script src="skills/skills.js"></script>
+<script src="battleSystem.js"></script>
 <script type="text/javascript">
 
 
@@ -34,6 +35,9 @@ var config = {
             update: update
         }
     };
+
+    // Battle controller
+    var battleSystem = new BattleSystem();
 
     var game = new Phaser.Game(config);
 
@@ -95,7 +99,7 @@ var config = {
       OTHER: 'other',
       MOVEBACK: 'moveback',
       MOVEFORWARD: 'moveforward',
-    }
+    };
 
     var actions = Actions.IDLE;
 
@@ -193,20 +197,22 @@ var config = {
       Commands.push(spellBtn);
       Commands.push(itemBtn);
 
-      atkBtn.on('pointerdown', function attack(){
-        player1.currAction = Actions.ATTACK;
-        player.anims.play('attack');
+        playerActionChoose(player);
 
-      });
-      skillBtn.on('pointerdown', function skill(){
-        console.log('Skill');
-      });
-      spellBtn.on('pointerdown', function spell(){
-        console.log('Spell');
-      });
-      itemBtn.on('pointerdown', function item(){
-        console.log('Item');
-      });
+      // atkBtn.on('pointerdown', function attack(){
+      //   // player1.currAction = Actions.ATTACK;
+      //   // player.anims.play('attack');
+      //
+      // });
+      // skillBtn.on('pointerdown', function skill(){
+      //   console.log('Skill');
+      // });
+      // spellBtn.on('pointerdown', function spell(){
+      //   console.log('Spell');
+      // });
+      // itemBtn.on('pointerdown', function item(){
+      //   console.log('Item');
+      // });
 
       mouseHoverMouseExit(atkBtn);
       mouseHoverMouseExit(skillBtn);
@@ -283,6 +289,29 @@ var config = {
 
     function fx_listerner(){
       player1.currAction = Actions.MOVEBACK;
+    }
+
+    function playerActionChoose(player){
+
+        atkBtn.on('pointerdown', function attack(){
+            // player1.currAction = Actions.ATTACK;
+            // player.anims.play('attack');
+            console.log('Attack');
+            battleSystem.log_action(player, 'Attack');
+
+        });
+        skillBtn.on('pointerdown', function skill(){
+            console.log('Skill');
+            battleSystem.log_action(player, 'Skill');
+        });
+        spellBtn.on('pointerdown', function spell(){
+            console.log('Spell');
+            battleSystem.log_action(player, 'Spell');
+        });
+        itemBtn.on('pointerdown', function item(){
+            console.log('Item');
+            battleSystem.log_action(player, 'Item');
+        });
     }
 
 </script>
