@@ -17,25 +17,97 @@
 <script src="battleSystem.js"></script>
 <script type="text/javascript">
 
+    // Ref (1)
+    var BootScene = new Phaser.Class({
+       Extends: Phaser.Scene,
+       initialize:
+       function BootScene(){
+           Phaser.Scene.call(this, {key: 'BootScene'});
+       },
+        preload: function(){
+            this.load.spritesheet('player', 'assets/MMIdle60x75.png', {frameWidth: 60, frameHeight: 75});
+            this.load.image('town', 'assets/Battleback_town.png');
+            this.load.image('dragon', 'assets/dragon.png');
+            this.load.spritesheet('flame', 'assets/Fireball44x44.png', {frameWidth:44, frameHeight: 44});
+        },
+        create: function(){
+           this.scene.start('BattleScene');
+        }
+    });
 
+    var BattleScene = new Phaser.Class({
+        Extends: Phaser.Scene,
+
+        initialize:
+        function BattleScene(){
+            Phaser.Scene.call(this, {key: 'BattleScene'});
+        },
+        create: function (){
+            this.cameras.main.setBackgroundColor('rgba(0, 200, 0, 0.5)');
+            this.scene.launch('UIScene');
+        }
+    });
+
+    var UIScene = new Phaser.Class({
+        Extends: Phaser.Scene,
+
+        initialize:
+        function UIScene(){
+            Phaser.Scene.call(this, { key: 'UIScene'});
+        },
+        create: function(){
+            this.graphics = this.add.graphics();
+            this.graphics.lineStyle(1, 0xffffff);
+            this.graphics.fillStyle(0x031f4c, 1);
+            //UI for player names
+            this.graphics.strokeRect(2, 450, 400, 150);
+            this.graphics.fillRect(2, 450, 400, 150);
+
+            // Commands
+            this.graphics.strokeRect(402, 450, 120, 150);
+            this.graphics.fillRect(402, 450, 120, 150);
+
+            // UI for enemies
+            this.graphics.strokeRect(522, 450, 278, 150);
+            this.graphics.fillRect(522, 450, 278, 150);
+        }
+    });
+
+
+
+    // var config = {
+    //     type: Phaser.AUTO,
+    //     width: 800,
+    //     height: 600,
+    //     pixelArt: true,
+    //     physics: {
+    //       default: 'arcade',
+    //       arcade: {
+    //         gravity: { y: 0},
+    //         debug: false
+    //       }
+    //     },
+    //     scene: {
+    //         preload: preload,
+    //         create: create,
+    //         update: update
+    //     }
+    // };
 
     var config = {
         type: Phaser.AUTO,
+        parent: 'content',
         width: 800,
         height: 600,
         pixelArt: true,
         physics: {
-          default: 'arcade',
-          arcade: {
-            gravity: { y: 0},
-            debug: false
-          }
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 0},
+                debug: false
+            }
         },
-        scene: {
-            preload: preload,
-            create: create,
-            update: update
-        }
+        scene: [BootScene, BattleScene, UIScene]
     };
 
     // Battle controller
